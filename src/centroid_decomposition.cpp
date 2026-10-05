@@ -31,7 +31,7 @@ void CentroidDecompositionFolklore::decompose(int node, int parent, int current_
     }
 }
 
-CentroidDecompositionFolklore::CentroidDecompositionFolklore(int n, vector<vector<int>> &t): NRO_NODES(n + 1), graph(t) {
+CentroidDecompositionFolklore::CentroidDecompositionFolklore(int n, const vector<vector<int>> &t): NRO_NODES(n + 1), graph(t) {
     // we asume an arbitrary centroid like u = 1
     cparent.resize(NRO_NODES, -1);
     subtree.resize(NRO_NODES, 0);

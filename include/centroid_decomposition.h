@@ -8,7 +8,7 @@ using namespace std;
 struct CentroidDecompositionFolklore {
 
     int NRO_NODES;
-    vector<vector<int>> graph;
+    const vector<vector<int>> &graph;
     vector<int> cparent; // centroid parent for a given node u
     vector<int> subtree; // subtree size for a given node u
 
@@ -17,7 +17,12 @@ struct CentroidDecompositionFolklore {
 
     void decompose(int node, int parent, int current_size, int prev_centroid);
 
-    CentroidDecompositionFolklore(int n, vector<vector<int>> &t);
+    CentroidDecompositionFolklore(int n, const vector<vector<int>> &t);
+
+    /* TODO */
+
+    // int query();
+    // void update();
 
 };
 
