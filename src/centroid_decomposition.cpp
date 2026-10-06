@@ -38,3 +38,7 @@ CentroidDecompositionFolklore::CentroidDecompositionFolklore(int n, const vector
     dfs_traversal(1, 0);
     decompose(1, 0, subtree[1], 0);
 }
+
+vector<int> CentroidDecompositionFolklore::get_centroid_decomposition() const {
+    return cparent;
+}

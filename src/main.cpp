@@ -10,11 +10,12 @@ int main () {
     vector<vector<int>> graph = {{}, {2, 3}, {1}, {1}};
 
     CentroidDecompositionFolklore cdf(3, graph);
+    vector<int> centroid_parent = cdf.get_centroid_decomposition();
 
-    cout << "0: " << cdf.cparent[0] << "\n";
-    cout << "1: " << cdf.cparent[1] << "\n";
-    cout << "2: " << cdf.cparent[2] << "\n";
-    cout << "3: " << cdf.cparent[3] << "\n";
+    cout << "0: " << centroid_parent[0] << "\n";
+    cout << "1: " << centroid_parent[1] << "\n";
+    cout << "2: " << centroid_parent[2] << "\n";
+    cout << "3: " << centroid_parent[3] << "\n";
 
 
     return 0;

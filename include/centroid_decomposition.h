@@ -19,10 +19,7 @@ struct CentroidDecompositionFolklore {
 
     CentroidDecompositionFolklore(int n, const vector<vector<int>> &t);
 
-    /* TODO */
-
-    // int query();
-    // void update();
+    vector<int> get_centroid_decomposition() const;
 
 };
 
