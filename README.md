@@ -9,6 +9,7 @@ Asunciones importantes:
  - Se asume que el grafo está indexado en 1.
  - El 0 actúa como un super padre (o super contenedor de todo el grafo).
  - ¿Ya fueron las elecciones?
+ - Grupo de videos explicativos: [Enlace de Youtube](https://www.youtube.com/playlist?list=PLI7yN2nJPdtU)
 
 Para ejecutar debe tener una temrinal compatbile con *bash*.
 ```bash
