@@ -1,14 +1,14 @@
 #include "graph_utils.h"
 
-GraphUtils::GraphUtils(int n, const vector<vector<int>> &g): NRO_NODES(n + 1), graph(g) {}
+GraphUtils::GraphUtils(int n, const vector<vector<int>> &g): NRO_NODES(n + 1), graph(g), timer(0) {}
 
 
 void GraphUtils::dfs(int u, int p) {
-    GraphUtils::tin[u] = timer++;
+    tin[u] = timer++;
     spg[u][0] = p;
     for (int i = 1; i < 20; i++) spg[u][i] = spg[spg[u][i-1]][i-1];
     for (auto v: graph[u]) if (v != p) dfs(v, u);
-    GraphUtils::tout[u] = timer++;
+    tout[u] = timer++;
 }
 
 bool GraphUtils::is_ancestor(int u, int v) {
