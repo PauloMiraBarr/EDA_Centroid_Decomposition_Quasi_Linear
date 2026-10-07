@@ -1,5 +1,6 @@
 /utils
 /build
 /generator
-/include
+/input
+/output
 /src

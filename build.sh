@@ -6,6 +6,7 @@ g++ -std=c++17 \
     -Iinclude \
     src/main.cpp \
     src/centroid_decomposition.cpp \
+    src/graph_utils.cpp \
     -o build/programa.exe
 
 if [ $? -eq 0 ]; then
