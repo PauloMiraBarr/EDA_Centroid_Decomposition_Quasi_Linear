@@ -9,7 +9,7 @@ struct CentroidDecompositionFolklore {
 
     int NRO_NODES;
     const vector<vector<int>> &graph;
-    vector<int> cparent; // centroid parent for a given node u
+    vector<int> centroid_parent; // centroid parent for a given node u
     vector<int> subtree; // subtree size for a given node u
 
 

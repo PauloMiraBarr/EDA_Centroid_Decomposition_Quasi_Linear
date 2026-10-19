@@ -5,8 +5,9 @@ mkdir -p build
 g++ -std=c++17 \
     -Iinclude \
     src/main.cpp \
-    src/centroid_decomposition.cpp \
+    src/centroid_decomposition_folklore.cpp \
     src/graph_utils.cpp \
+    src/centroid_decomposition_quasi_linear.cpp \
     -o build/programa.exe
 
 if [ $? -eq 0 ]; then

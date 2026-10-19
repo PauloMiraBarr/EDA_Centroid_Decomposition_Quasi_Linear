@@ -1,5 +1,7 @@
 # Centroid Decomposition en tiempo O(n log log n)
 
+***Importante.*** bash pensado para ejecutar en linux.
+ 
 Resumen semana 1:
 
 Centroid decomposition algoritmo clásico implementado.
