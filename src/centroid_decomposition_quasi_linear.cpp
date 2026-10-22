@@ -16,9 +16,13 @@ void CentroidDecompositionQLinear::build_cover() {
     meta_tree.resize(2 * NRO_NODES);
     timer_node = NRO_NODES;
     /* subrutines for cover */
+    // routine 1: start with cover root's
     int pcs_root = dfs_root_cover_assign(1, 0);
     if (pcs_root != 0) alpha[1] = 1;
+    // routine 2: extend the cover of to root's to thier childs
     dfs_extend_root_cover(1, 0, alpha[1]);
+    // routine 3: condense that into a meta tree
+    dfs_condense_cover(1, 0);
 }
 
 void CentroidDecompositionQLinear::dfs_extend_root_cover(int u, int p, int cover) {
@@ -28,6 +32,45 @@ void CentroidDecompositionQLinear::dfs_extend_root_cover(int u, int p, int cover
         if (alpha[v] != 0) dfs_extend_root_cover(v, u, alpha[v]);
         else dfs_extend_root_cover(v, u, alpha[u]);
     }
+}
+
+int CentroidDecompositionQLinear::dfs_condense_cover(int u, int p) {
+    int subt_u = (betta[u] == u ? 1 : 0);
+    int last_cover = 0;
+    int carry_subt_v = 0;
+    bool need_to_add = false;
+    for (auto v: graph[u]) {
+        if (v == p) continue;
+        int subt_v = dfs_condense_cover(v, u);
+        subt_u += subt_v;
+        // two nodes of different cover
+        if (alpha[u] != alpha[v]) {
+            // case 1: is the first cover we met
+            if (last_cover == 0) {
+                last_cover = alpha[v];
+                carry_subt_v = subt_v;
+                need_to_add = true;
+            }
+            // case 2: we get the last cover again
+            else if (alpha[v] == last_cover) {
+                carry_subt_v += subt_v;
+            }
+            // case 3: is not the same last cover
+            else if (alpha[v] != last_cover) {
+                // update last_cover
+                meta_tree[alpha[u]].push_back({last_cover, carry_subt_v});
+                meta_tree[last_cover].push_back({alpha[u], (NRO_NODES - 1) - carry_subt_v});
+                last_cover = alpha[v];
+                carry_subt_v = subt_v;
+            }
+        }
+    }
+    // update last cover visited
+    if (need_to_add) {
+        meta_tree[alpha[u]].push_back({last_cover, carry_subt_v});
+        meta_tree[last_cover].push_back({alpha[u], (NRO_NODES - 1) - carry_subt_v});
+    }
+    return subt_u;
 }
 
 int CentroidDecompositionQLinear::dfs_root_cover_assign(int u, int p) {
