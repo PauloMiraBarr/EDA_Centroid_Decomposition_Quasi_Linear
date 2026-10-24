@@ -1,7 +1,7 @@
 #include "centroid_decomposition_quasi_linear.h"
 
-CentroidDecompositionQLinear::CentroidDecompositionQLinear(int n, const vector<vector<int>>& t): NRO_NODES(n + 1), graph(t) {
-    centroid_parent.resize(NRO_NODES, 0);
+CentroidDecompositionQLinear::CentroidDecompositionQLinear(int n, const vector<vector<int>>& t): NRO_NODES(n), graph(t) {
+    centroid_parent.resize(NRO_NODES + 1, 0);
 
     /* here calls routines */
     build_cover();
@@ -10,11 +10,11 @@ CentroidDecompositionQLinear::CentroidDecompositionQLinear(int n, const vector<v
 
 void CentroidDecompositionQLinear::build_cover() {
     /* start cover information data */
-    component_size_bound = log2(NRO_NODES - 1);
-    alpha.resize(2 * NRO_NODES, 0);
-    betta.resize(2 * NRO_NODES, 0);
-    meta_tree.resize(2 * NRO_NODES);
-    timer_node = NRO_NODES;
+    component_size_bound = log2(NRO_NODES);
+    alpha.resize(2 * NRO_NODES + 1, 0);
+    betta.resize(2 * NRO_NODES + 1, 0);
+    meta_tree.resize(2 * NRO_NODES + 1);
+    timer_node = NRO_NODES + 1;
     /* subrutines for cover */
     // routine 1: start with cover root's
     int pcs_root = dfs_root_cover_assign(1, 0);
@@ -24,6 +24,9 @@ void CentroidDecompositionQLinear::build_cover() {
     // routine 3: condense that into a meta tree
     dfs_condense_cover(1, 0);
 }
+
+
+/* Section: Building cover ---------------------------------- */
 
 void CentroidDecompositionQLinear::dfs_extend_root_cover(int u, int p, int cover) {
     if (alpha[u] == 0) alpha[u] = cover;
@@ -59,7 +62,7 @@ int CentroidDecompositionQLinear::dfs_condense_cover(int u, int p) {
             else if (alpha[v] != last_cover) {
                 // update last_cover
                 meta_tree[alpha[u]].push_back({last_cover, carry_subt_v});
-                meta_tree[last_cover].push_back({alpha[u], (NRO_NODES - 1) - carry_subt_v});
+                meta_tree[last_cover].push_back({alpha[u], NRO_NODES - carry_subt_v});
                 last_cover = alpha[v];
                 carry_subt_v = subt_v;
             }
@@ -68,7 +71,7 @@ int CentroidDecompositionQLinear::dfs_condense_cover(int u, int p) {
     // update last cover visited
     if (need_to_add) {
         meta_tree[alpha[u]].push_back({last_cover, carry_subt_v});
-        meta_tree[last_cover].push_back({alpha[u], (NRO_NODES - 1) - carry_subt_v});
+        meta_tree[last_cover].push_back({alpha[u], NRO_NODES - carry_subt_v});
     }
     return subt_u;
 }
@@ -130,7 +133,34 @@ int CentroidDecompositionQLinear::dfs_root_cover_assign(int u, int p) {
     return 0;
 }
 
-void CentroidDecompositionQLinear::centroid_construction() {
-    /* split of cover to build centroid decomposition */
+
+/* Section: Processing cover ---------------------------------- */
+
+void CentroidDecompositionQLinear::search_cover_of_centroid(int u, int p, const int tamanho, const int last_centroid) {
+    for (auto [v, subt_v]: meta_tree[u]) {
+        if (v == p) continue;
+        if (subt_v <= tamanho / 2) continue;
+        search_cover_of_centroid(v, u, tamanho, last_centroid);
+        return;
+    }
+
+    printf("Cover of centroid [%2d]   &  Last centroid [%2d]\n", u, last_centroid);
+
+    int centroid = search_centroid_into_cover(u);
+
+    printf(" [->] Centroid of cover [%2d]\n", centroid);
+
+    // [Falta definir en el .h y en el .cpp] split_and_delete_centroid_of_cover(centroid, u);
 }
 
+int CentroidDecompositionQLinear::search_centroid_into_cover(int cover) {
+    return cover;
+}
+
+void CentroidDecompositionQLinear::centroid_construction() {
+    search_cover_of_centroid(alpha[1], 0, NRO_NODES, 0);
+}
+
+vector<int> CentroidDecompositionQLinear::get_centroid_decomposition() const {
+    return centroid_parent;
+}

@@ -40,9 +40,15 @@ struct CentroidDecompositionQLinear {
     // condense cover and convert it into a meta tree
     int dfs_condense_cover(int u, int p);
 
-    /* ------- Processing cover section ------- */
+    /* ------- processing cover section ------- */
     // main function
     void centroid_construction();
+    // auxiliar functions
+    void search_cover_of_centroid(int u, int p, const int t, const int last_centroid);
+    int search_centroid_into_cover(int cover);
+
+    /* ------- other classic methods ------- */
+    vector<int> get_centroid_decomposition() const;
 
 };
 
