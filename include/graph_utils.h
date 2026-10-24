@@ -7,13 +7,13 @@ using namespace std;
 struct GraphUtils {
 
     const vector<vector<int>>& graph;
-    int NRO_NODES;
+    int NUM_NODES;
     
     vector<int> tin;
     vector<int> tout;
     int timer;
 
-    vector<vector<int>> spg;
+    vector<vector<int>> up;
 
     GraphUtils(int n, const vector<vector<int>> &g);
 

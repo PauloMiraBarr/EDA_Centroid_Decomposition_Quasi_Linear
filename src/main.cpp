@@ -7,7 +7,7 @@
 using namespace std;
 
 
-void test_grah_utils() {
+void test_graph_utils() {
     vector<vector<int>> graph = {{}, {2, 3}, {1}, {1}};
     GraphUtils gu(3, graph);
     gu.build_lca_and_ancestor();
@@ -27,16 +27,16 @@ void test_centroid_folklore_construction() {
 }
 
 void test_centroid_quasi_linear_cover_and_construction() {
-    /* Comentario personal:
-     * O bien el algoritmo propuesto para la cobertura del paper original
-     * O bien la interpretación interna de los autores estaba errada.
-     * En cualquier caso el pseudocódigo no refleja lo que graficaron los autores.
-     * Ni tampoco la demostración cumple con las condiciones del pseudocódigo.
-     * Por tal motivo nos regimos estrictamente del pseudocódigo y no de la 
-     * demostración u interpretaciones de los autores.
+    /* Note:
+     * Either the algorithm proposed for the cover in the original paper,
+     * or the authors' internal interpretation was wrong.
+     * In any case, the pseudocode does not reflect what the authors drew.
+     * Nor does the proof satisfy the conditions stated in the pseudocode.
+     * For this reason, we follow the pseudocode strictly, not the proof
+     * or the authors' interpretations.
      * */
 
-    // graph tested
+    // test graph
     vector<vector<int>> graph = {
         {},  
         {2, 9}, // 1 
@@ -61,7 +61,7 @@ void test_centroid_quasi_linear_cover_and_construction() {
         {18} // 20
     };
 
-    // Special Centroid Constructor
+    // Create centroid decomposition object
     CentroidDecompositionQLinear cdql(20, graph);
     
     // printf("[M] = %2d\n", cdql.component_size_bound);
@@ -69,12 +69,12 @@ void test_centroid_quasi_linear_cover_and_construction() {
     /*
     for (int i = 1; i <= 20; i++) {
         if (cdql.alpha[i] == 0) continue;
-        printf("Node [%2d]   Cover by [%2d]   Black of Cover [%2d]\n", i, cdql.alpha[i], cdql.betta[cdql.alpha[i]]);
+        printf("Node [%2d]   Covered by [%2d]   Black node of cover [%2d]\n", i, cdql.alpha[i], cdql.betta[cdql.alpha[i]]);
     }
 
-    // Result of cover and meta tree
-    printf(" -------------------- Condense Graph -------------------- \n");
-    printf(" [INFO]  [From Node] -> [To Node]  ([Weight fo conection])\n");
+    // Result of cover and meta-tree
+    printf(" -------------------- Condensed graph -------------------- \n");
+    printf(" [INFO]  [From Node] -> [To Node]  ([Weight of connection])\n");
     vector<vector<pair<int, int>>> cg = cdql.meta_tree;
     for (int u = 0; u < cg.size(); u++) {
         if (cg[u].size() == 0) continue;
@@ -94,7 +94,7 @@ void test_centroid_quasi_linear_cover_and_construction() {
 }
 
 void test_centroid_quasi_linear_graph_v2() {
-        // graph tested
+    // test graph
     vector<vector<int>> graph = {
         {},  
         {2, 9}, // 1 
@@ -118,21 +118,21 @@ void test_centroid_quasi_linear_graph_v2() {
         {17},  // 19
     };
 
-    // Special Centroid Constructor
+    // Create centroid decomposition object
     CentroidDecompositionQLinear cdql(19, graph);
     
     // printf("[M] = %2d\n", cdql.component_size_bound);
     
     /*  
-    // Inner process debugging --------------------------
+    // Internal state debugging --------------------------
     for (int i = 1; i <= 19; i++) {
         if (cdql.alpha[i] == 0) continue;
-        printf("Node [%2d]   Cover by [%2d]   Black of Cover [%2d]\n", i, cdql.alpha[i], cdql.betta[cdql.alpha[i]]);
+        printf("Node [%2d]   Covered by [%2d]   Black node of cover [%2d]\n", i, cdql.alpha[i], cdql.betta[cdql.alpha[i]]);
     }
 
-    // Result of cover and meta tree
-    printf(" -------------------- Condense Graph -------------------- \n");
-    printf(" [INFO]  [From Node] -> [To Node]  ([Weight fo conection])\n");
+    // Result of cover and meta-tree
+    printf(" -------------------- Condensed graph -------------------- \n");
+    printf(" [INFO]  [From Node] -> [To Node]  ([Weight of connection])\n");
     vector<vector<pair<int, int>>> cg = cdql.meta_tree;
     for (int u = 0; u < cg.size(); u++) {
         if (cg[u].size() == 0) continue;
@@ -155,7 +155,7 @@ void test_centroid_quasi_linear_graph_v2() {
 int main () {
 
     // test_centroid_folklore_construction();
-    // test_grah_utils();
+    // test_graph_utils();
     test_centroid_quasi_linear_cover_and_construction();
     // test_centroid_quasi_linear_graph_v2();
 

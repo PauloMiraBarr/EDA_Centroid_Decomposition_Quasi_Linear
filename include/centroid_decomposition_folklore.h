@@ -7,10 +7,10 @@ using namespace std;
 
 struct CentroidDecompositionFolklore {
 
-    int NRO_NODES;
+    int NUM_NODES;
     const vector<vector<int>> &graph;
-    vector<int> centroid_parent; // centroid parent for a given node u
-    vector<int> subtree; // subtree size for a given node u
+    vector<int> centroid_parent; // parent of node u in the centroid tree
+    vector<int> subtree; // size of subtree rooted at node u in the current component
 
 
     void dfs_traversal(int node, int parent);
