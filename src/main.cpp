@@ -26,16 +26,42 @@ void test_centroid_folklore_construction() {
     cout << "3: " << centroid_parent[3] << "\n";
 }
 
-void test_centroid_quasi_linear_cover_and_construction() {
-    /* Note:
-     * Either the algorithm proposed for the cover in the original paper,
-     * or the authors' internal interpretation was wrong.
-     * In any case, the pseudocode does not reflect what the authors drew.
-     * Nor does the proof satisfy the conditions stated in the pseudocode.
-     * For this reason, we follow the pseudocode strictly, not the proof
-     * or the authors' interpretations.
-     * */
+void qlinear_print_alpha(vector<int> alpha, vector<int> betta, int N) {
+    for (int i = 1; i <= N; i++) {
+        if (alpha[i] == 0) continue;
+        printf("Node [%2d]   Covered by [%2d]   Black node of cover [%2d]\n", i, alpha[i], betta[alpha[i]]);
+    }
+}
 
+void qlinear_print_meta_tree(vector<vector<pair<int, int>>> g) {
+    printf(" -------------------- Condensed graph -------------------- \n");
+    printf(" [INFO]  [From Node] -> [To Node]  ([Weight of connection])\n");
+    for (int u = 0; u < g.size(); u++) {
+        if (g[u].size() == 0) continue;
+        for (auto [v, w]: g[u]) {
+            printf("%2d -> %2d  (%2d)\n", u, v, w);
+        }
+    }
+}
+
+void qlinear_print_centroid(vector<int> centroid_parent) {
+    for (int i = 0; i < centroid_parent.size(); i++) {
+        printf("[R] centroid parent of [%2d]  =>  [%2d]\n", i, centroid_parent[i]);
+    }
+}
+
+void qlinear_print_middle_tree(vector<vector<int>> g) {
+    for (int u = 0; u < g.size(); u++) {
+        if (g[u].size() == 0) continue;
+        for (auto v: g[u]) {
+            printf("%2d -> %2d\n", u, v);
+        }
+    }
+}
+
+
+void test_centroid_quasi_linear_cover_and_construction() {
+    printf(" ===== Graph v1 =====\n");
     // test graph
     vector<vector<int>> graph = {
         {},  
@@ -65,35 +91,14 @@ void test_centroid_quasi_linear_cover_and_construction() {
     CentroidDecompositionQLinear cdql(20, graph);
     
     // printf("[M] = %2d\n", cdql.component_size_bound);
-    
-    /*
-    for (int i = 1; i <= 20; i++) {
-        if (cdql.alpha[i] == 0) continue;
-        printf("Node [%2d]   Covered by [%2d]   Black node of cover [%2d]\n", i, cdql.alpha[i], cdql.betta[cdql.alpha[i]]);
-    }
-
-    // Result of cover and meta-tree
-    printf(" -------------------- Condensed graph -------------------- \n");
-    printf(" [INFO]  [From Node] -> [To Node]  ([Weight of connection])\n");
-    vector<vector<pair<int, int>>> cg = cdql.meta_tree;
-    for (int u = 0; u < cg.size(); u++) {
-        if (cg[u].size() == 0) continue;
-        for (auto [v, w]: cg[u]) {
-            printf("%2d -> %2d  (%2d)\n", u, v, w);
-        }
-    }
-    // ------------------------- 
-    // */
-
-    /*
-    vector<int> cdql_centroid = cdql.get_centroid_decomposition();
-    for (int i = 0; i < cdql_centroid.size(); i++) {
-        printf("[R] centroid parent of [%2d]  =>  [%2d]\n", i, cdql_centroid[i]);
-    }
-    // */
+    qlinear_print_alpha(cdql.alpha, cdql.betta, cdql.NUM_NODES);
+    // qlinear_print_middle_tree(cdql.middle_tree);
+    qlinear_print_meta_tree(cdql.meta_tree);
+    // qlinear_print_centroid(cdql.centroid_parent);
 }
 
 void test_centroid_quasi_linear_graph_v2() {
+    printf(" ===== Graph v2 =====\n");
     // test graph
     vector<vector<int>> graph = {
         {},  
@@ -122,33 +127,10 @@ void test_centroid_quasi_linear_graph_v2() {
     CentroidDecompositionQLinear cdql(19, graph);
     
     // printf("[M] = %2d\n", cdql.component_size_bound);
-    
-    /*  
-    // Internal state debugging --------------------------
-    for (int i = 1; i <= 19; i++) {
-        if (cdql.alpha[i] == 0) continue;
-        printf("Node [%2d]   Covered by [%2d]   Black node of cover [%2d]\n", i, cdql.alpha[i], cdql.betta[cdql.alpha[i]]);
-    }
-
-    // Result of cover and meta-tree
-    printf(" -------------------- Condensed graph -------------------- \n");
-    printf(" [INFO]  [From Node] -> [To Node]  ([Weight of connection])\n");
-    vector<vector<pair<int, int>>> cg = cdql.meta_tree;
-    for (int u = 0; u < cg.size(); u++) {
-        if (cg[u].size() == 0) continue;
-        for (auto [v, w]: cg[u]) {
-            printf("%2d -> %2d  (%2d)\n", u, v, w);
-        }
-    }
-    // ------------------------- 
-    // */
-
-    vector<int> cdql_centroid = cdql.get_centroid_decomposition();
-    /*
-    for (int i = 0; i < cdql_centroid.size(); i++) {
-        printf("[R] centroid parent of [%2d]  =>  [%2d]\n", i, cdql_centroid[i]);
-    }
-    // */
+    qlinear_print_alpha(cdql.alpha, cdql.betta, cdql.NUM_NODES);
+    // qlinear_print_middle_tree(cdql.middle_tree);
+    // qlinear_print_meta_tree(cdql.meta_tree);
+    // qlinear_print_centroid(cdql.centroid_parent);
 }
 
 
