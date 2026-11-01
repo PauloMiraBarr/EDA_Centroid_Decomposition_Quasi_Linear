@@ -33,13 +33,13 @@ void qlinear_print_alpha(vector<int> alpha, vector<int> betta, int N) {
     }
 }
 
-void qlinear_print_meta_tree(vector<vector<pair<int, int>>> g) {
+void qlinear_print_meta_tree(vector<vector<int>> g, vector<int> d) {
     printf(" -------------------- Condensed graph -------------------- \n");
-    printf(" [INFO]  [From Node] -> [To Node]  ([Weight of connection])\n");
+    printf(" [INFO]  [From Node (u)] -> [To Node (v)]  ([Weight of component (u)])\n");
     for (int u = 0; u < g.size(); u++) {
         if (g[u].size() == 0) continue;
-        for (auto [v, w]: g[u]) {
-            printf("%2d -> %2d  (%2d)\n", u, v, w);
+        for (auto v: g[u]) {
+            printf("%2d -> %2d  (%2d)\n", u, v, d[u]);
         }
     }
 }
@@ -56,6 +56,14 @@ void qlinear_print_middle_tree(vector<vector<int>> g) {
         for (auto v: g[u]) {
             printf("%2d -> %2d\n", u, v);
         }
+    }
+}
+
+void qlinear_print_subtree(vector<int> g) {
+    printf(" == [ Subtree size of cover ] ==\n");
+    for (int i = 1; i < g.size(); i++) {
+        if (g[i] == 0) continue;
+        printf(" [%2d]  : %2d\n", i, g[i]);
     }
 }
 
@@ -91,9 +99,10 @@ void test_centroid_quasi_linear_cover_and_construction() {
     CentroidDecompositionQLinear cdql(20, graph);
     
     // printf("[M] = %2d\n", cdql.component_size_bound);
-    qlinear_print_alpha(cdql.alpha, cdql.betta, cdql.NUM_NODES);
+    // qlinear_print_alpha(cdql.alpha, cdql.betta, cdql.NUM_NODES);
     // qlinear_print_middle_tree(cdql.middle_tree);
-    qlinear_print_meta_tree(cdql.meta_tree);
+    qlinear_print_meta_tree(cdql.meta_tree, cdql.delta);
+    qlinear_print_subtree(cdql.subtree);
     // qlinear_print_centroid(cdql.centroid_parent);
 }
 
@@ -127,9 +136,10 @@ void test_centroid_quasi_linear_graph_v2() {
     CentroidDecompositionQLinear cdql(19, graph);
     
     // printf("[M] = %2d\n", cdql.component_size_bound);
-    qlinear_print_alpha(cdql.alpha, cdql.betta, cdql.NUM_NODES);
+    // qlinear_print_alpha(cdql.alpha, cdql.betta, cdql.NUM_NODES);
     // qlinear_print_middle_tree(cdql.middle_tree);
-    // qlinear_print_meta_tree(cdql.meta_tree);
+    qlinear_print_meta_tree(cdql.meta_tree, cdql.delta);
+    qlinear_print_subtree(cdql.subtree);
     // qlinear_print_centroid(cdql.centroid_parent);
 }
 
@@ -138,8 +148,8 @@ int main () {
 
     // test_centroid_folklore_construction();
     // test_graph_utils();
-    test_centroid_quasi_linear_cover_and_construction();
-    // test_centroid_quasi_linear_graph_v2();
+    // test_centroid_quasi_linear_cover_and_construction();
+    test_centroid_quasi_linear_graph_v2();
 
     return 0;
 }

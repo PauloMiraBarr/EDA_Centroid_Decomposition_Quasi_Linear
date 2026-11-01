@@ -2,16 +2,21 @@
 
 CentroidDecompositionQLinear::CentroidDecompositionQLinear(int n, const vector<vector<int>> &t): NUM_NODES(n), original_tree(t) {
     build_cover();
-    // centroid_construction();
+    centroid_construction();
 }
+
+
+/* ------------------------- section of building... ------------------------- */
 
 void CentroidDecompositionQLinear::build_cover() {
     component_size_bound = log2(NUM_NODES);
     timer_node = NUM_NODES;
     alpha.resize(NUM_NODES + 1, 0);
     betta.resize(NUM_NODES + 1, 0);
-    meta_tree.resize(NUM_NODES + 1);
+    delta.resize(NUM_NODES + 1, 0);
+    subtree.resize(NUM_NODES + 1, 0);
     middle_tree.resize(NUM_NODES + 1);
+    meta_tree.resize(NUM_NODES + 1);
 
     /* ----- auxiliary functions -----*/
     // step 1: assign cover roots
@@ -24,7 +29,7 @@ void CentroidDecompositionQLinear::build_cover() {
         middle_tree[betta[i]].push_back(i);
     }
     // step 3: create meta tree
-    dfs_build_meta_tree(1, 0);
+    dfs_build_meta_tree(alpha[1], 0);
 }
 
 
@@ -33,7 +38,7 @@ int CentroidDecompositionQLinear::dfs_root_cover_assign(int u, int p) {
     betta[u] = u;
     int root_pcs = 1;
     vector<pair<int, int>> child_pcs;
-    for (auto v: original_tree[u]) {
+    for (int v: original_tree[u]) {
         if (v == p) continue;
         int pcs_v = dfs_root_cover_assign(v, u);
         if (pcs_v == 0) continue;
@@ -66,7 +71,7 @@ int CentroidDecompositionQLinear::dfs_root_cover_assign(int u, int p) {
                 int red = cover_add_node();
                 betta[red] = u;
                 alpha[red] = red;
-                for (auto w: group) alpha[w] = red;
+                for (int w: group) alpha[w] = red;
                 for (i = i + 1; i < (int)child_pcs.size(); i++) alpha[child_pcs[i].first] = red;
             }
             // k == 1: nothing is shared, all of it stays in u's own subtree
@@ -76,7 +81,7 @@ int CentroidDecompositionQLinear::dfs_root_cover_assign(int u, int p) {
         int red = cover_add_node();
         betta[red] = u;
         alpha[red] = red;
-        for (auto w: group) alpha[w] = red;
+        for (int w: group) alpha[w] = red;
         consumed += current_pcs - 1;
         current_pcs = 1;
         group.clear();
@@ -87,7 +92,7 @@ int CentroidDecompositionQLinear::dfs_root_cover_assign(int u, int p) {
 
 void CentroidDecompositionQLinear::dfs_extend_root_cover_and_middle_tree(int u, int p, int cover_id) {
     if (alpha[u] == 0) alpha[u] = cover_id;
-    for (auto v: original_tree[u]) {
+    for (int v: original_tree[u]) {
         if (v == p) continue;
         bool red_connection = false;
         if (alpha[v] != 0) {
@@ -105,18 +110,16 @@ void CentroidDecompositionQLinear::dfs_extend_root_cover_and_middle_tree(int u, 
     }
 }
 
-int CentroidDecompositionQLinear::dfs_build_meta_tree(int u, int p) {
-    int subt_u = (betta[u] == u ? 1 : 0);
-    for (auto v: middle_tree[u]) {
+void CentroidDecompositionQLinear::dfs_build_meta_tree(int u, int p) {
+    delta[alpha[u]] += (betta[u] == u ? 1 : 0);
+    for (int v: middle_tree[u]) {
         if (v == p) continue;
-        int subt_v = dfs_build_meta_tree(v, u);
+        dfs_build_meta_tree(v, u);
         if (alpha[v] != alpha[u]) {
-            meta_tree[u].push_back({v, subt_v});
-            meta_tree[v].push_back({u, NUM_NODES - subt_v});
+            meta_tree[alpha[u]].push_back(alpha[v]);
+            meta_tree[alpha[v]].push_back(alpha[u]);
         }
-        subt_u += subt_v;
     }
-    return subt_u;
 }
 
 /* super hidden functions */
@@ -124,7 +127,132 @@ int CentroidDecompositionQLinear::dfs_build_meta_tree(int u, int p) {
 int CentroidDecompositionQLinear::cover_add_node() {
     alpha.emplace_back(0);
     betta.emplace_back(0);
+    delta.emplace_back(0);
+    subtree.emplace_back(0);
     meta_tree.emplace_back();
     middle_tree.emplace_back();
     return ++timer_node;
+}
+
+
+/* ------------------------- Section of decomposition... ------------------------- */
+
+void CentroidDecompositionQLinear::centroid_construction() {
+    centroid_parent.resize(NUM_NODES + 1, -1);
+    dfs_calculate_subtree(alpha[1], 0);
+    dfs_search_centroid(alpha[1], 0, NUM_NODES, 0);
+}
+
+void CentroidDecompositionQLinear::dfs_calculate_subtree(int u, int p) {
+    subtree[u] = delta[u];
+    for (int v: meta_tree[u]) {
+        if (v == p) continue;
+        if (centroid_parent[betta[v]] != -1) continue;
+        dfs_calculate_subtree(v, u);
+        subtree[u] += subtree[v];
+    }
+}
+
+void CentroidDecompositionQLinear::dfs_search_centroid(int u, int p, int current_size, int last_centroid) {
+    for (int v: meta_tree[u]) {
+        if (v == p) continue;
+        if (centroid_parent[betta[v]] != -1) continue;
+        if ((subtree[v] << 1) <= current_size) continue;
+        dfs_search_centroid(v, u, current_size, last_centroid);
+        return;
+    }
+    
+    subtree[p] = current_size - subtree[u];
+    // search centroid into cover
+    subtree_into_cover(u, 0);
+    int centroid = search_into_cover(u, 0, current_size);
+    centroid_parent[betta[centroid]] = last_centroid;
+
+    printf(" [centroid founded] [Red: %2d] [Black :%2d]\n", centroid, betta[centroid]);
+    
+
+    // get balck and red nodes
+    vector<int> removed = {betta[centroid]};
+    for (int r: middle_tree[betta[centroid]]) {
+        if (betta[r] == betta[centroid]) {
+            removed.push_back(r);
+        }
+    }
+
+    // quitar las conexiones hacia centroide de los vecinos en el meta tree (quitar desde el destino)
+    for (int x: removed) {
+        for (int w: middle_tree[x]) {
+            if (centroid_parent[betta[w]] != -1) continue;
+            if (alpha[w] == alpha[x]) continue;
+            auto &tree = meta_tree[alpha[w]];
+            tree.erase(remove(tree.begin(), tree.end(), alpha[x]), tree.end());
+        }
+    }
+
+    // como aun tenemos las conexiones desde el origen, vamos a hacer el split de ello
+    vector<int> entires;
+    for (int x: removed) 
+        for (int w: middle_tree[x]) 
+            if (centroid_parent[betta[w]] == -1 and alpha[w] == alpha[x]) 
+                entires.push_back(w);
+    for (int w: entires) split_meta_tree(w, 0);
+
+    // ahora tenemos los puntos de entrada de cada componente
+    vector<int> subroots;
+    for (int x: removed) 
+        for (int w: middle_tree[x])
+            if (centroid_parent[betta[w]] == -1)
+                subroots.push_back(alpha[w]);
+    
+    // recursion sobre cada componente
+    for (int r: subroots) {
+        dfs_calculate_subtree(r, 0);
+        dfs_search_centroid(r, 0, subtree[r], betta[centroid]);
+    }
+}
+
+/* super hidden functions */
+
+void CentroidDecompositionQLinear::split_meta_tree(int u, int p) {
+    delta[u] = (betta[u] == u ? 1 : 0);
+    meta_tree[u].clear();
+    for (int v: middle_tree[u]) {
+        if (v == p) continue;
+        if (centroid_parent[betta[v]] != -1) continue;
+        if (alpha[u] == alpha[v]) {
+            split_meta_tree(v, u);
+            meta_tree[u].push_back(v);
+            meta_tree[v].push_back(u);
+        } else {
+            auto &tree = meta_tree[alpha[v]];
+            replace(tree.begin(), tree.end(), alpha[u], u);
+            meta_tree[u].push_back(alpha[v]);
+        }
+    }
+    alpha[u] = u;
+}
+
+int CentroidDecompositionQLinear::search_into_cover(int u, int p, int current_size) {
+    for (int v: middle_tree[u]) {
+        if (v == p) continue;
+        if (centroid_parent[betta[v]] != -1) continue;
+        if (alpha[u] != alpha[v]) continue;
+        if ((subtree[v] << 1) <= current_size) continue;
+        return search_into_cover(v, u, current_size);
+    }
+    return u;
+}
+
+void CentroidDecompositionQLinear::subtree_into_cover(int u, int p) {
+    subtree[u] = (betta[u] == u ? 1 : 0);
+    for (int v: middle_tree[u]) {
+        if (v == p) continue;
+        if (centroid_parent[betta[v]] != -1) continue;
+        if (alpha[u] == alpha[v]) {
+            subtree_into_cover(v, u);
+            subtree[u] += subtree[v];
+        } else {
+            subtree[u] += subtree[alpha[v]];
+        }
+    }
 }
