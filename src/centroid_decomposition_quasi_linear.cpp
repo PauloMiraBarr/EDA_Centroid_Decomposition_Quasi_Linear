@@ -168,7 +168,7 @@ void CentroidDecompositionQLinear::dfs_search_centroid(int u, int p, int current
     int centroid = search_into_cover(u, 0, current_size);
     centroid_parent[betta[centroid]] = last_centroid;
 
-    printf(" [centroid founded] [Red: %2d] [Black :%2d]\n", centroid, betta[centroid]);
+    // printf(" [centroid founded] [Red: %2d] [Black :%2d]\n", centroid, betta[centroid]);
     
 
     // get balck and red nodes
