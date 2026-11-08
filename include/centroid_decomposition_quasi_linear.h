@@ -22,9 +22,9 @@ struct CentroidDecompositionQLinear {
     vector<int> alpha; // root id of the component/cover containing the node
     vector<int> betta; // black node (actual node of a red node) for the cover
     vector<int> delta; // size of component/cover
-    vector<int> subtree; // size uf subtree's cover
+    vector<int> subtree; // size of subtree's cover
     vector<vector<int>> middle_tree;
-    vector<vector<int>> meta_tree; // adjacency list of the meta-tree: node -> {(neighbor, weight), ...}
+    vector<vector<int>> meta_tree; // adjacency list of the meta-tree: node -> {neighbor, ...}
 
     /* -------------------- methods -------------------- */
     /* Constructor */
