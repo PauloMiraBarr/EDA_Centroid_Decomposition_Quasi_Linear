@@ -21,21 +21,21 @@ La organización de las carpetas es la siguiente.
 
 ```
 Repositorio
-- generator/       # Códigos relacionados a la generación de los árboles
-- include/         # Cabeceras para las implementaciones principales del repositorio
-  - centroid_decomposition_folklore.h        # Cabecera del algoritmo clásico
-  - centroid_decomposition_quasi_linear.h    # Cabecera del algoritmo estudiado
-  - graph_utils.h      # No relevante, cabecera de algunas aplicaciones del árbol de centroides
-- src/
-  - centroid_decomposition_folklore.cpp        # Implementación del algoritmo clásico
-  - centroid_decomposition_quasi_linear.cpp    # Implementación del algoritmo estudiado
-  - graph_utils.cpp      # No relevante, implementación de algunas aplicaciones del árbol de centroides
-  - benchmark.cpp        # Orquestador de comandos para realizar los benchmarks
-  - main.cpp             # Lugar donde puedes aplicar con libertad ambos centroides y experimentar
-- benchmark.sh           # Script para realizar los benchmarks
-- build.sh               # Script para ejecutar el código main.cpp
-- Informe.pdf            # Informe asociado al estudio y repositorio
-- PPT.pdf                # Presentación utilizada durante la exposición
+├── generator/       # Códigos relacionados a la generación de los árboles
+├── include/         # Cabeceras para las implementaciones principales del repositorio
+│   ├── centroid_decomposition_folklore.h        # Cabecera del algoritmo clásico
+│   ├── centroid_decomposition_quasi_linear.h    # Cabecera del algoritmo estudiado
+│   └── graph_utils.h      # No relevante, cabecera de algunas aplicaciones del árbol de centroides
+├── src/
+│   ├── centroid_decomposition_folklore.cpp        # Implementación del algoritmo clásico
+│   ├── centroid_decomposition_quasi_linear.cpp    # Implementación del algoritmo estudiado
+│   ├── graph_utils.cpp      # No relevante, implementación de algunas aplicaciones del árbol de centroides
+│   ├── benchmark.cpp        # Orquestador de comandos para realizar los benchmarks
+│   └── main.cpp             # Lugar donde puedes aplicar con libertad ambos centroides y experimentar
+├── benchmark.sh           # Script para realizar los benchmarks
+├── build.sh               # Script para ejecutar el código main.cpp
+├── Informe.pdf            # Informe asociado al estudio y repositorio
+└── PPT.pdf                # Presentación utilizada durante la exposición
 ```
 
 
@@ -48,11 +48,14 @@ build.sh se utiliza tal cual, llamándolo como bash build.sh en la terminal.
 El script de benchmark es más dinámico.
 
 Uso:
+
+```bash
 bash benchmark.sh --help
-  bash benchmark.sh -random [-n 1000,10000,100000] [-reps 5] [-seed 42] [-csv output/benchmark.csv] [-validate]
-  bash benchmark.sh -star -n 1000000
-  bash benchmark.sh -complete -n 100000
-  bash benchmark.sh -path -n 50000
+bash benchmark.sh -random [-n 1000,10000,100000] [-reps 5] [-seed 42] [-csv output/benchmark.csv] [-validate]
+bash benchmark.sh -star -n 1000000
+bash benchmark.sh -complete -n 100000
+bash benchmark.sh -path -n 50000
+```
 
 - random, star, path, complete: sobre qué familia de árboles realizar el benchmark.
 - n: sobre cuántos nodos tendrá el árbol; puedes colocar un único valor para n o varios separados por ",".
